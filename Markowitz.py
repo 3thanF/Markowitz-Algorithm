@@ -1,16 +1,16 @@
 import numpy as np
-from scipy.optimize import minimize
+from scipy.optimize import minimize # Módulo utilizado para encontrar el mínimo de funcion
 
-def obtener_datos_usuario():
+def obtener_datos_usuario(): # Función para obtener los activos de la cartera e inicializar otras variables
     n = int(input("Ingrese la cantidad de activos en la cartera: "))
     rendimientos_esperados = []
     matriz_covarianza = np.zeros((n, n))
 
-    for i in range(n):
+    for i in range(n): # Recolección de rendimientos esperados
         r = float(input(f"Ingrese el rendimiento esperado del activo {i+1}: "))
         rendimientos_esperados.append(r)
 
-    for i in range(n):
+    for i in range(n): # Asignación de varianzas y covarianzas
         for j in range(i, n):
             if i == j:
                 var = float(input(f"Ingrese la varianza del activo {i+1}: "))
@@ -19,14 +19,14 @@ def obtener_datos_usuario():
                 cov = float(input(f"Ingrese la covarianza entre el activo {i+1} y el activo {j+1}: "))
                 matriz_covarianza[i][j] = matriz_covarianza[j][i] = cov
 
-    return np.array(rendimientos_esperados), matriz_covarianza
+    return np.array(rendimientos_esperados), matriz_covarianza # Obtenemos los valores ingresados por el usuario
 
-def funcion_objetivo(pesos, rendimientos_esperados, matriz_covarianza, riesgo_aversion):
+def funcion_objetivo(pesos, rendimientos_esperados, matriz_covarianza, riesgo_aversion): # Función para calcular el desempeño de la inversión
     portafolio_retorno = np.dot(pesos, rendimientos_esperados)
     portafolio_varianza = np.dot(pesos.T, np.dot(matriz_covarianza, pesos))
     return -portafolio_retorno + riesgo_aversion * portafolio_varianza
 
-def optimizar_cartera(rendimientos_esperados, matriz_covarianza, riesgo_aversion):
+def optimizar_cartera(rendimientos_esperados, matriz_covarianza, riesgo_aversion): # Función para la optimización
     n = len(rendimientos_esperados)
     restriccion = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
     limites = tuple((0, 1) for _ in range(n))
